@@ -100,13 +100,20 @@ fn build_apks(
             &java_files,
         )?;
 
-        let build_tools_path = config
-            .sdk_path
-            .join("build-tools")
-            .join(&config.build_tools_version);
-        let aapt_path = build_tools_path.join("aapt2");
-        let d8_path = build_tools_path.join("d8");
-        let zipalign_path = build_tools_path.join("zipalign");
+        let aapt_path = match which::which("aapt") {
+            Ok(tool_path) => PathBuf::from(tool_path),
+            _ => return Err(format_err!("command not found: aapt")),
+        };
+
+        let d8_path = match which::which("d8") {
+            Ok(tool_path) => PathBuf::from(tool_path),
+            _ => return Err(format_err!("command not found: d8")),
+        };
+
+        let zipalign_path = match which::which("zipalign") {
+            Ok(tool_path) => PathBuf::from(tool_path),
+            _ => return Err(format_err!("command not found: zipalign")),
+        };
 
         // Create unaligned APK which includes resources and assets
         let unaligned_apk_name = format!("{}_unaligned.apk", target.name());
@@ -257,8 +264,6 @@ fn build_apks(
             .arg("-target")
             .arg("1.8")
             .arg("-Xlint:deprecation")
-            .arg("-bootclasspath")
-            .arg(&config.android_jar_path)
             .arg("-classpath")
             .arg(&classpath)
             .arg("-d")
@@ -381,8 +386,14 @@ fn build_apks(
 
         if sign {
             // Sign the APK with the development certificate
+        let apksigner_path = match which::which("apksigner") {
+            Ok(tool_path) => PathBuf::from(tool_path),
+            _ => return Err(format_err!("command not found: apksigner")),
+        };
+
+
             util::script_process(
-                build_tools_path.join(format!("apksigner{}", util::EXECUTABLE_SUFFIX_BAT)),
+                apksigner_path
             )
             .arg("sign")
             .arg("--ks")

@@ -18,6 +18,7 @@ multimap = "0.8.0"
 serde = "1.0.104"
 toml = "0.5.5"
 glob = "0.3"
+which = "4.4.0"
 
 [dev-dependencies]
 assert_cmd = "0.12.0"

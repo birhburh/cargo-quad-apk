@@ -1,6 +1,8 @@
 #![allow(warnings)]
 
+use std::path::PathBuf;
 use anyhow::format_err;
+use cargo::CliError;
 use cargo::core::Workspace;
 use cargo::util::{
     command_prelude::{opt, ArgMatchesExt, CommandExt},
@@ -359,8 +361,15 @@ pub fn execute_logcat(options: &ArgMatches, cargo_gctx: &GlobalContext) -> cargo
 
     let android_config = config::load(&workspace, &options.get_one::<String>("package").cloned())?;
 
-    drop(writeln!(workspace.gctx().shell().err(), "Starting logcat"));
-    let adb = android_config.sdk_path.join("platform-tools/adb");
+    drop(writeln!(
+        workspace.gctx().shell().err(),
+        "Starting logcat"
+    ));
+    let adb = match which::which("adb") {
+        Ok(tool_path) => PathBuf::from(tool_path),
+        _ => return Err(CliError::code(-1)),
+    };
+
     ProcessBuilder::new(&adb).arg("logcat").exec()?;
 
     Ok(())
