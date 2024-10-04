@@ -1,3 +1,12 @@
+# termux fork
+
+to build macroquad/miniquad in termux on android phone
+
+install these packages
+```
+apt install aapt d8 ecj android-tools apksigner binutils
+```
+
 A fork of an old `android-rs-glue` crate, compatible with building miniquad-based projects.
 
 # Supported `[package.metadata.android]` entries
