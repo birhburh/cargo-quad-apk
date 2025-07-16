@@ -1,11 +1,13 @@
-# termux fork
+A fork of an old `cargo-quad-apk` crate, compatible with building miniquad-based projects on termux.
 
-to build macroquad/miniquad in termux on android phone
-
-install these packages
+## Building
 ```
+apt install openssl pkg-config
+cargo install --path=.
 apt install aapt d8 ecj android-tools apksigner binutils
 ```
+
+# Original Readme:
 
 A fork of an old `android-rs-glue` crate, compatible with building miniquad-based projects.
 
